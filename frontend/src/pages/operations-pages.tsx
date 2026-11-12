@@ -155,10 +155,11 @@ export function FieldUnitPage() {
   if (!unit) {
     return <div className="px-4 py-6 md:px-6"><SectionHeading title="Unit not found" description="That sample container is not in the demonstration fleet." /></div>
   }
-  const entries = demo.fieldEntries.filter((entry) => entry.unitId === unit.id)
+  const selected = unit
+  const entries = demo.fieldEntries.filter((entry) => entry.unitId === selected.id)
 
   function save(kind: FieldKind, text: string) {
-    demo.addFieldEntry({ unitId: unit.id, kind, note: text })
+    demo.addFieldEntry({ unitId: selected.id, kind, note: text })
     toast("Saved in this demo session. Nothing was sent to a company system.")
   }
 
