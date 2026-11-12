@@ -9,13 +9,16 @@ Il file precedente era vuoto. Qui sono riportati solo gli elementi verificabili 
 - Frontend con dashboard, elenco filtrabile, dettaglio e creazione, collegato alle API.
 - OpenAPI JSON disponibile. Swagger UI e ReDoc disattivati.
 - Collection Postman degli endpoint esistenti.
+- Migrazioni Alembic. La baseline `f0dc31842d67` descrive la tabella `containers`. L'avvio dell'applicazione non modifica lo schema.
+- Demo ContainerOS nel frontend, con dati di esempio separati dal registro API.
+- Cinque aree di esperienza sulla stessa fonte sintetica: Fleet, Commercial, Executive, Assistant e Connected Operations. Le azioni di deposito restano nella sessione del browser.
+- Build statica pubblicabile. La demo non chiama un backend locale.
 
 ## Non presente nel backend
 
 - Modifica di un container.
 - Cancellazione di un container.
 - Filtri, ricerca e paginazione lato server.
-- Migrazioni di schema: `init_db` crea le tabelle mancanti e non modifica una tabella già esistente.
 - Autenticazione e autorizzazione.
 - Funzioni di intelligenza artificiale.
 

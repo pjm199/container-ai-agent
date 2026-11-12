@@ -31,7 +31,7 @@ createRoot(root).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
-        <Toaster />
+        <Toaster position="top-center" offset={{ top: "calc(0.75rem + env(safe-area-inset-top))" }} />
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

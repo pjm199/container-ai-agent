@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ErrorState, EmptyState } from "@/components/feedback-state"
+import { ErrorState, EmptyState, RegistryOffline } from "@/components/feedback-state"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
-import { ApiError, listContainers } from "@/lib/api"
+import { ApiError, listContainers, liveRegistryEnabled } from "@/lib/api"
 import {
   CONTAINER_STATUSES,
   STATUS_LABELS,
@@ -22,9 +22,12 @@ import {
 export function ContainersPage() {
   const [query, setQuery] = useState("")
   const [status, setStatus] = useState<ContainerStatus | "all">("all")
+  const live = liveRegistryEnabled()
   const containers = useQuery({
     queryKey: ["containers"],
     queryFn: listContainers,
+    enabled: live,
+    retry: false,
   })
 
   const visible = useMemo(
@@ -46,6 +49,8 @@ export function ContainersPage() {
         }
       />
       <div className="space-y-4 p-4 md:p-6">
+        {!live ? <RegistryOffline /> : (
+        <>
         <div className="grid gap-3 rounded-xl border bg-card p-4 md:grid-cols-[minmax(0,1fr)_220px]">
           <div className="space-y-2">
             <Label htmlFor="container-search">Search by container number</Label>
@@ -66,7 +71,7 @@ export function ContainersPage() {
             <Label htmlFor="status-filter">Status</Label>
             <select
               id="status-filter"
-              className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="min-h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:min-h-9 md:text-sm"
               value={status}
               onChange={(event) => {
                 const value = event.target.value
@@ -126,7 +131,7 @@ export function ContainersPage() {
 
         {visible.length > 0 ? (
           <div className="rounded-xl border bg-card">
-            <Table>
+            <Table className="data-cards">
               <TableHeader>
                 <TableRow>
                   <TableHead>Number</TableHead>
@@ -139,7 +144,7 @@ export function ContainersPage() {
               <TableBody>
                 {visible.map((container) => (
                   <TableRow key={container.id}>
-                    <TableCell>
+                    <TableCell data-label="Number">
                       <Link
                         className="font-medium text-primary underline-offset-4 hover:underline"
                         to={`/containers/${container.id}`}
@@ -147,18 +152,20 @@ export function ContainersPage() {
                         {container.container_number}
                       </Link>
                     </TableCell>
-                    <TableCell>{container.container_type}</TableCell>
-                    <TableCell>
+                    <TableCell data-label="Type">{container.container_type}</TableCell>
+                    <TableCell data-label="Status">
                       <StatusBadge status={container.status} />
                     </TableCell>
-                    <TableCell>{container.location}</TableCell>
-                    <TableCell>{container.condition}</TableCell>
+                    <TableCell data-label="Location">{container.location}</TableCell>
+                    <TableCell data-label="Condition">{container.condition}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         ) : null}
+        </>
+        )}
       </div>
     </>
   )

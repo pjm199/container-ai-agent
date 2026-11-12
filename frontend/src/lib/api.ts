@@ -16,12 +16,30 @@ type ErrorBody = {
   detail?: unknown
 }
 
-function apiBaseUrl(): string {
-  const configured = import.meta.env.VITE_API_BASE_URL
-  if (!configured) {
-    throw new Error("VITE_API_BASE_URL is not set.")
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"])
+
+export function publishableApiBase(configured: string | undefined, production: boolean): string | null {
+  const value = configured?.trim()
+  if (!value) {
+    return null
   }
-  return configured.replace(/\/$/, "")
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    return null
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return null
+  }
+  if (production && LOOPBACK_HOSTS.has(url.hostname)) {
+    return null
+  }
+  return value.replace(/\/$/, "")
+}
+
+export function liveRegistryEnabled(): boolean {
+  return publishableApiBase(import.meta.env.VITE_API_BASE_URL, import.meta.env.PROD) !== null
 }
 
 export function messageFromBody(body: unknown, status: number): string {
@@ -74,9 +92,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers.set("Content-Type", "application/json")
   }
 
+  const base = publishableApiBase(import.meta.env.VITE_API_BASE_URL, import.meta.env.PROD)
+  if (!base) {
+    throw new ApiError("The live registry is not connected in this deployment.", 0, null)
+  }
+
   let response: Response
   try {
-    response = await fetch(`${apiBaseUrl()}${path}`, { ...init, headers })
+    response = await fetch(`${base}${path}`, { ...init, headers })
   } catch {
     throw new ApiError("The server could not be reached.", 0, null)
   }

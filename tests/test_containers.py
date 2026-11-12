@@ -6,8 +6,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete
 
 from app.config import settings
-from app.database import SessionLocal, init_db
+from app.database import SessionLocal
 from app.main import app
+from app.migrate import upgrade_to_head
 from app.models.container import Container
 
 BASE_CONTAINER = {
@@ -157,7 +158,7 @@ def test_suite_does_not_use_the_development_database() -> None:
 
 def test_roundtrip_on_configured_sqlite() -> None:
     app.dependency_overrides.clear()
-    init_db()
+    upgrade_to_head(settings.database_url)
     _clear_configured_containers()
     payload = dict(BASE_CONTAINER)
     payload["container_number"] = "CONT-REAL-1"

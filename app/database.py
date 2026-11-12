@@ -55,8 +55,9 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
-    """Create missing tables. Existing tables are left unchanged."""
-    import app.models  # noqa: F401  registers model metadata
+    """Ensure the SQLite directory exists.
 
+    Schema changes are applied with Alembic, not during startup. Startup does
+    not upgrade, downgrade, or reset the database.
+    """
     ensure_sqlite_parent_dir(settings.database_url)
-    Base.metadata.create_all(bind=engine)

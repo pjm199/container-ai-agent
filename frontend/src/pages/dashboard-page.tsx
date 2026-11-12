@@ -4,9 +4,9 @@ import { AlertCircle, Boxes, CircleCheck, Container, RefreshCw } from "lucide-re
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ErrorState, EmptyState } from "@/components/feedback-state"
+import { ErrorState, EmptyState, RegistryOffline } from "@/components/feedback-state"
 import { PageHeader } from "@/components/page-header"
-import { ApiError, listContainers } from "@/lib/api"
+import { ApiError, listContainers, liveRegistryEnabled } from "@/lib/api"
 import { countContainers, type ContainerCounts } from "@/lib/containers"
 
 const STATS: Array<{
@@ -22,9 +22,12 @@ const STATS: Array<{
 ]
 
 export function DashboardPage() {
+  const live = liveRegistryEnabled()
   const containers = useQuery({
     queryKey: ["containers"],
     queryFn: listContainers,
+    enabled: live,
+    retry: false,
   })
 
   const counts = containers.data ? countContainers(containers.data) : null
@@ -33,7 +36,7 @@ export function DashboardPage() {
     <>
       <PageHeader
         title="Dashboard"
-        description="Live totals from the container registry."
+        description="Live totals from the local API registry. These records are separate from the ContainerOS sample tenant."
         actions={
           <Link className={buttonVariants()} to="/containers">
             Manage containers
@@ -41,8 +44,9 @@ export function DashboardPage() {
         }
       />
       <div className="space-y-6 p-4 md:p-6">
+        {!live ? <RegistryOffline /> : null}
         {containers.isLoading ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-busy="true">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-5" aria-busy="true">
             {STATS.map((stat) => (
               <Skeleton key={stat.key} className="h-28" />
             ))}
@@ -61,7 +65,7 @@ export function DashboardPage() {
 
         {counts ? (
           <>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
               {STATS.map((stat) => (
                 <Card key={stat.key} role="group" aria-label={stat.label}>
                   <CardHeader>
@@ -69,7 +73,7 @@ export function DashboardPage() {
                       <stat.icon className="size-4" aria-hidden="true" />
                       {stat.label}
                     </CardDescription>
-                    <CardTitle className="text-3xl font-semibold">{counts[stat.key]}</CardTitle>
+                    <CardTitle className="text-2xl font-semibold sm:text-3xl">{counts[stat.key]}</CardTitle>
                   </CardHeader>
                 </Card>
               ))}

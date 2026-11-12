@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
-import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 export function ErrorState({
   title,
@@ -38,5 +39,19 @@ export function EmptyState({
       <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{message}</p>
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
     </div>
+  )
+}
+
+export function RegistryOffline() {
+  return (
+    <EmptyState
+      title="Live registry is not part of this deployment"
+      message="This published demo does not call a backend. The experience areas use synthetic data and stay available. The registry appears when the app is run locally against its API."
+      action={
+        <Link className={buttonVariants({ variant: "outline" })} to="/">
+          Back to overview
+        </Link>
+      }
+    />
   )
 }

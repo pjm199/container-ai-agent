@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest"
-import { ApiError, createContainer, fieldErrorsFromApi, getContainer, listContainers } from "./api"
+import { ApiError, createContainer, fieldErrorsFromApi, getContainer, listContainers, publishableApiBase } from "./api"
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -10,6 +10,15 @@ function jsonResponse(status: number, body: unknown): Response {
 
 afterEach(() => {
   vi.unstubAllGlobals()
+})
+
+describe("publishable API base", () => {
+  test("keeps a local URL for development and drops it from a published build", () => {
+    expect(publishableApiBase("http://localhost:8000", false)).toBe("http://localhost:8000")
+    expect(publishableApiBase("http://127.0.0.1:8000/", true)).toBeNull()
+    expect(publishableApiBase("https://api.example.com", true)).toBe("https://api.example.com")
+    expect(publishableApiBase("  ", true)).toBeNull()
+  })
 })
 
 describe("API client", () => {

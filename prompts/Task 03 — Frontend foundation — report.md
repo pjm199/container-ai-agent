@@ -134,7 +134,8 @@ Browser, contro l'API reale:
 Questi punti restano veri dopo la milestone frontend:
 
 - In preflight Starlette aggiunge anche `Accept-Language` e `Content-Language` agli header consentiti. L'origine resta limitata alle due URL di Vite.
-- `init_db` crea le tabelle mancanti e non modifica una tabella già esistente.
+
+Al termine di questa milestone lo schema era ancora creato da `init_db`. TASK 04.1 lo ha sostituito con Alembic.
 
 TASK 03.1 ha poi rimosso il record di verifica `CONT-UI-0001`, il `package-lock.json` vuoto nella root e ha compilato `prompts/README.md`. Il documento di architettura è `docs/ARCHITECTURE.md`. `prompts/02-container-management-api.md` resta vuoto.
 

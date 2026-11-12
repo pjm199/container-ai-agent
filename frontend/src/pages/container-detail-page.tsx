@@ -4,20 +4,22 @@ import { ArrowLeft } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ErrorState } from "@/components/feedback-state"
+import { ErrorState, RegistryOffline } from "@/components/feedback-state"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
-import { ApiError, getContainer } from "@/lib/api"
+import { ApiError, getContainer, liveRegistryEnabled } from "@/lib/api"
 import { formatCreatedAt } from "@/lib/containers"
 
 export function ContainerDetailPage() {
   const params = useParams()
   const containerId = Number(params.containerId)
+  const live = liveRegistryEnabled()
   const idIsValid = Number.isInteger(containerId) && containerId > 0
   const container = useQuery({
     queryKey: ["containers", containerId],
     queryFn: () => getContainer(containerId),
-    enabled: idIsValid,
+    enabled: live && idIsValid,
+    retry: false,
   })
 
   const missing = !idIsValid || (container.error instanceof ApiError && container.error.status === 404)
@@ -35,11 +37,12 @@ export function ContainerDetailPage() {
         }
       />
       <div className="p-4 md:p-6">
+        {!live ? <RegistryOffline /> : null}
         {container.isLoading ? (
           <Skeleton className="h-64" aria-busy="true" />
         ) : null}
 
-        {missing ? (
+        {live && missing ? (
           <ErrorState title="Container not found" message="No container exists for this identifier." />
         ) : null}
 

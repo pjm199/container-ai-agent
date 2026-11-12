@@ -5,8 +5,9 @@ import { toast } from "sonner"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RegistryOffline } from "@/components/feedback-state"
 import { PageHeader } from "@/components/page-header"
-import { ApiError, createContainer, fieldErrorsFromApi } from "@/lib/api"
+import { ApiError, createContainer, fieldErrorsFromApi, liveRegistryEnabled } from "@/lib/api"
 import {
   CONTAINER_STATUSES,
   STATUS_LABELS,
@@ -83,6 +84,12 @@ export function ContainerCreatePage() {
           </Link>
         }
       />
+      {liveRegistryEnabled() ? null : (
+        <div className="p-4 md:p-6">
+          <RegistryOffline />
+        </div>
+      )}
+      {liveRegistryEnabled() ? (
       <form className="mx-auto max-w-2xl space-y-5 p-4 md:p-6" onSubmit={onSubmit} noValidate>
         {formError ? (
           <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm">
@@ -111,7 +118,7 @@ export function ContainerCreatePage() {
           <Label htmlFor="status">Status</Label>
           <select
             id="status"
-            className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+            className="min-h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive md:min-h-9 md:text-sm"
             value={draft.status}
             aria-invalid={fieldErrors.status ? true : undefined}
             aria-describedby={fieldErrors.status ? "status-error" : undefined}
@@ -154,7 +161,7 @@ export function ContainerCreatePage() {
           <Label htmlFor="notes">Notes</Label>
           <textarea
             id="notes"
-            className="min-h-24 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="min-h-24 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
             value={draft.notes}
             onChange={(event) => {
               update("notes", event.target.value)
@@ -165,6 +172,7 @@ export function ContainerCreatePage() {
           {mutation.isPending ? "Creating…" : "Create container"}
         </Button>
       </form>
+      ) : null}
     </>
   )
 }

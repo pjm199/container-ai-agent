@@ -3,5 +3,6 @@ uvicorn[standard]==0.39.0
 pydantic==2.13.5
 pydantic-settings==2.11.0
 sqlalchemy==2.0.57
+alembic==1.16.5
 pytest==8.4.2
 httpx==0.28.1
