@@ -17,11 +17,11 @@ import {
 import { fieldClass, HorizontalBars, KpiCard, MapCanvas, Panel, RevenueChart, SectionHeading } from "@/components/demo-visuals"
 
 const MODULES = [
-  { to: "/fleet", title: "Fleet", text: "Inventory, utilization, distribution and maintenance." },
-  { to: "/commercial", title: "Commercial", text: "Customers, quotes, contracts and margin." },
-  { to: "/executive", title: "Executive", text: "How the sample company is doing, and what deserves attention." },
-  { to: "/assistant", title: "Assistant", text: "Scripted answers over the same sample book." },
-  { to: "/operations", title: "Operations", text: "Yard search, a container card and actions that stay in this session." },
+  { to: "/fleet", title: "Fleet", text: "Inventory, utilization, distribution and maintenance.", accent: "border-t-teal-600 bg-teal-50/60" },
+  { to: "/commercial", title: "Commercial", text: "Customers, quotes, contracts and margin.", accent: "border-t-amber-500 bg-amber-50/70" },
+  { to: "/executive", title: "Executive", text: "How the sample company is doing, and what deserves attention.", accent: "border-t-indigo-500 bg-indigo-50/70" },
+  { to: "/assistant", title: "Assistant", text: "Scripted answers over the same sample book.", accent: "border-t-violet-500 bg-violet-50/70" },
+  { to: "/operations", title: "Operations", text: "Yard search, a container card and actions that stay in this session.", accent: "border-t-cyan-600 bg-cyan-50/70" },
 ]
 
 export function OverviewPage() {
@@ -72,7 +72,7 @@ export function OverviewPage() {
         <h2 className="mb-3 text-sm font-semibold">Five readings of the same book</h2>
         <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 xl:grid-cols-5">
           {MODULES.map((module) => (
-            <Link key={module.to} to={module.to} className="border bg-card px-4 py-3 transition-colors hover:bg-muted">
+            <Link key={module.to} to={module.to} className={`border border-t-2 px-4 py-3 transition-colors hover:brightness-95 ${module.accent}`}>
               <p className="text-sm font-semibold">{module.title}</p>
               <p className="mt-1 text-xs text-pretty text-muted-foreground">{module.text}</p>
             </Link>

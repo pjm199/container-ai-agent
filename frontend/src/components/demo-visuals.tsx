@@ -36,7 +36,7 @@ export function SectionHeading({
 
 export function KpiCard({ label, value, detail, to }: { label: string; value: string; detail: string; to?: string }) {
   const card = (
-    <article className="min-w-0 border bg-card px-3 py-3 sm:px-4" aria-label={label}>
+    <article className="min-w-0 border border-teal-100 border-t-2 border-t-teal-600 bg-gradient-to-b from-teal-50 to-card px-3 py-3 sm:px-4" aria-label={label}>
       <p className="text-[11px] leading-snug font-medium tracking-[0.08em] text-muted-foreground uppercase sm:tracking-[0.14em]">{label}</p>
       <p className="mt-2 text-xl leading-tight font-semibold tracking-tight break-words tabular-nums sm:text-2xl">{value}</p>
       <p className="mt-1 text-xs text-pretty text-muted-foreground">{detail}</p>
@@ -63,14 +63,18 @@ export function RevenueChart({ points }: { points: Array<{ month: string; revenu
     return { ...point, x, y }
   })
   const line = coordinates.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ")
+  const first = coordinates[0]
+  const last = coordinates.at(-1)
+  const area = first && last ? `${line} L ${last.x.toFixed(1)} ${height} L ${first.x.toFixed(1)} ${height} Z` : ""
   const summary = points.map((point) => `${formatMonth(point.month)} ${formatUsd(point.revenue)}`).join(", ")
   const [activeMonth, setActiveMonth] = useState(points.at(-1)?.month ?? "")
   const active = coordinates.find((point) => point.month === activeMonth) ?? coordinates.at(-1)
 
   return (
     <figure className="min-w-0">
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Revenue ${summary}`} className="h-40 w-full text-primary sm:h-44">
-        <path d={line} fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Revenue ${summary}`} className="h-40 w-full text-teal-700 sm:h-44">
+        {area ? <path d={area} fill="currentColor" opacity="0.16" /> : null}
+        <path d={line} fill="none" stroke="currentColor" strokeWidth="2.5" />
         {coordinates.map((point) => {
           const selected = point.month === active?.month
           const label = `${formatMonth(point.month)} revenue ${formatUsd(point.revenue)}, margin ${formatUsd(point.margin)}`
@@ -94,7 +98,7 @@ export function RevenueChart({ points }: { points: Array<{ month: string; revenu
                   }
                 }}
               />
-              <circle cx={point.x} cy={point.y} r={selected ? 5 : 3} fill="currentColor" pointerEvents="none" />
+              <circle cx={point.x} cy={point.y} r={selected ? 5 : 3} fill={selected ? "#b45309" : "currentColor"} pointerEvents="none" />
             </g>
           )
         })}
@@ -125,14 +129,17 @@ export function HorizontalBars({ rows }: { rows: Array<{ label: string; value: n
   const max = Math.max(...rows.map((row) => row.value), 1)
   return (
     <ul className="space-y-3">
-      {rows.map((row) => (
+      {rows.map((row, index) => (
         <li key={row.label}>
           <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
             <span className="min-w-0">{row.label}</span>
             <span className="shrink-0 tabular-nums text-muted-foreground">{row.display}</span>
           </div>
-          <div className="h-1.5 bg-muted">
-            <div className="h-full bg-primary" style={{ width: `${Math.max(4, (row.value / max) * 100)}%` }} />
+          <div className="h-2 rounded-full bg-teal-50">
+            <div
+              className={cn("h-full rounded-full", ["bg-teal-600", "bg-amber-500", "bg-indigo-500", "bg-orange-500", "bg-sky-600"][index % 5])}
+              style={{ width: `${Math.max(4, (row.value / max) * 100)}%` }}
+            />
           </div>
         </li>
       ))}
@@ -262,20 +269,20 @@ export function FleetMap({
       role="img"
       aria-label="Schematic fleet distribution across Europe, Asia and North America"
       preserveAspectRatio="xMidYMid meet"
-      className={cn("fleet-map w-full bg-[#f4f6f8]", expanded ? "h-full" : "h-auto")}
+      className={cn("fleet-map w-full bg-[#f3fbf8]", expanded ? "h-full" : "h-auto")}
     >
-      <text x="32" y="36" className="map-region-label fill-slate-500" fontSize="12">
+      <text x="32" y="36" className="map-region-label fill-teal-800" fontSize="12">
         Europe
       </text>
-      <text x="520" y="36" className="map-region-label fill-slate-500" fontSize="12">
+      <text x="520" y="36" className="map-region-label fill-amber-800" fontSize="12">
         Asia
       </text>
-      <text x="790" y="36" className="map-region-label fill-slate-500" fontSize="12">
+      <text x="790" y="36" className="map-region-label fill-indigo-800" fontSize="12">
         North America
       </text>
-      <ellipse cx="190" cy="190" rx="120" ry="90" fill="#e7ebf0" />
-      <ellipse cx="620" cy="200" rx="150" ry="110" fill="#e7ebf0" />
-      <ellipse cx="860" cy="210" rx="80" ry="100" fill="#e7ebf0" />
+      <ellipse cx="190" cy="190" rx="120" ry="90" fill="#c7ebe3" />
+      <ellipse cx="620" cy="200" rx="150" ry="110" fill="#f6e4c4" />
+      <ellipse cx="860" cy="210" rx="80" ry="100" fill="#d9e2f8" />
       {lanes.map((lane) => (
         <line
           key={lane.key}
@@ -283,7 +290,7 @@ export function FleetMap({
           y1={lane.from.y}
           x2={lane.to.x}
           y2={lane.to.y}
-          stroke="#94a3b8"
+          stroke="#0f766e"
           strokeDasharray="4 4"
         />
       ))}
@@ -292,7 +299,7 @@ export function FleetMap({
         const content = (
           <>
             <circle cx={row.location.x} cy={row.location.y} r={expanded ? 48 : 28} fill="transparent" />
-            <circle cx={row.location.x} cy={row.location.y} r={active ? 8 : 6} fill={active ? "#1e293b" : "#334155"} />
+            <circle cx={row.location.x} cy={row.location.y} r={active ? 8 : 6} fill={active ? "#b45309" : "#0f766e"} />
             <text x={row.location.x + 10} y={row.location.y - 10} fontSize="11" className="map-port-label fill-slate-800">
               {row.location.name}
             </text>
@@ -316,7 +323,7 @@ export function FleetMap({
 
 export function Panel({ title, action, children, className }: { title: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cn("border bg-card", className)}>
+    <section className={cn("border border-teal-100 bg-card", className)}>
       <header className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
         <h2 className="min-w-0 text-sm font-semibold tracking-tight">{title}</h2>
         {action}

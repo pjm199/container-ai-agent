@@ -23,33 +23,27 @@ import { useMinWidth } from "@/lib/viewport"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { to: "/", label: "Overview", icon: LayoutDashboard, end: true },
-  { to: "/fleet", label: "Fleet", icon: Container, end: false },
-  { to: "/commercial", label: "Commercial", icon: Briefcase, end: false },
-  { to: "/executive", label: "Executive", icon: LineChart, end: false },
-  { to: "/assistant", label: "Assistant", icon: MessageSquareText, end: false },
-  { to: "/operations", label: "Operations", icon: Radar, end: false },
+  { to: "/", label: "Overview", icon: LayoutDashboard, end: true, tone: "text-sky-300", tab: "text-sky-700" },
+  { to: "/fleet", label: "Fleet", icon: Container, end: false, tone: "text-teal-300", tab: "text-teal-700" },
+  { to: "/commercial", label: "Commercial", icon: Briefcase, end: false, tone: "text-amber-300", tab: "text-amber-800" },
+  { to: "/executive", label: "Executive", icon: LineChart, end: false, tone: "text-indigo-300", tab: "text-indigo-700" },
+  { to: "/assistant", label: "Assistant", icon: MessageSquareText, end: false, tone: "text-violet-300", tab: "text-violet-700" },
+  { to: "/operations", label: "Operations", icon: Radar, end: false, tone: "text-cyan-300", tab: "text-cyan-700" },
 ]
 
-const TAB_ITEMS = [
-  NAV_ITEMS[5],
-  NAV_ITEMS[1],
-  NAV_ITEMS[2],
-  NAV_ITEMS[3],
-  NAV_ITEMS[4],
-]
+const TAB_ITEMS = [NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[3], NAV_ITEMS[4], NAV_ITEMS[5]]
 
 function navigationClass(isActive: boolean) {
   return cn(
-    "flex min-h-11 items-center gap-2 border-l-2 border-transparent px-3 py-2 text-sm text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+    "flex min-h-11 items-center gap-2 border-l-2 border-transparent px-3 py-2 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
     isActive && "border-sidebar-primary bg-sidebar-accent text-sidebar-accent-foreground",
   )
 }
 
-function tabClass(isActive: boolean) {
+function tabClass(isActive: boolean, tone: string) {
   return cn(
-    "relative flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] leading-tight",
-    isActive ? "text-primary" : "text-muted-foreground",
+    "relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 px-0.5",
+    isActive ? cn("bg-white font-semibold", tone) : cn(tone, "opacity-80"),
   )
 }
 
@@ -146,7 +140,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <nav className="flex flex-col gap-1 px-2 pb-3" aria-label="Primary">
             {NAV_ITEMS.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => navigationClass(isActive)}>
-                <item.icon className="size-4" aria-hidden="true" />
+                <item.icon className={cn("size-4", item.tone)} aria-hidden="true" />
                 {item.label}
               </NavLink>
             ))}
@@ -159,7 +153,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
       ) : null}
       <div className="flex h-dvh min-w-0 flex-col">
-        <p className="shrink-0 border-b bg-slate-100 px-3 py-1.5 pt-[max(0.375rem,env(safe-area-inset-top))] text-center text-[10px] leading-snug font-medium tracking-wide text-slate-600 sm:text-[11px]">
+        <p className="shrink-0 border-b border-teal-200 bg-teal-50 px-3 py-1.5 pt-[max(0.375rem,env(safe-area-inset-top))] text-center text-[10px] leading-snug font-medium tracking-wide text-teal-900 sm:text-[11px]">
           {registry
             ? "LIVE REGISTRY · LOCAL API · SEPARATE FROM THE SYNTHETIC DEMO"
             : "DEMO ENVIRONMENT · SYNTHETIC DATA · NOT CONNECTED TO COMPANY SYSTEMS"}
@@ -294,12 +288,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         {desktop ? null : (
           <nav
             aria-label="Primary"
-            className="grid shrink-0 grid-cols-5 border-t bg-card pb-[env(safe-area-inset-bottom)]"
+            className="grid shrink-0 grid-cols-5 border-t border-teal-100 bg-teal-50/70 pb-[env(safe-area-inset-bottom)]"
           >
             {TAB_ITEMS.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => tabClass(isActive)}>
+              <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => tabClass(isActive, item.tab)}>
                 <item.icon className="size-5" aria-hidden="true" />
-                <span className="tab-label max-w-full truncate">{item.label}</span>
+                <span className="tab-label max-w-full text-center text-[10px] leading-tight font-medium tracking-tight">{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -517,7 +511,7 @@ function MobileMenu({
         <nav aria-label="All sections" className="flex flex-col px-2 pb-2">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => navigationClass(isActive)} onClick={onClose}>
-              <item.icon className="size-4" aria-hidden="true" />
+              <item.icon className={cn("size-4", item.tone)} aria-hidden="true" />
               {item.label}
             </NavLink>
           ))}
