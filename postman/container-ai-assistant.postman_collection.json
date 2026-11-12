@@ -1,0 +1,92 @@
+{
+  "info": {
+    "name": "Container AI Assistant",
+    "description": "Requests for the endpoints implemented by the FastAPI backend. Swagger UI and ReDoc are disabled; the OpenAPI document remains at /openapi.json.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "containerId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "OpenAPI",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/openapi.json"
+      }
+    },
+    {
+      "name": "List containers",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/containers"
+      }
+    },
+    {
+      "name": "Create container",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"container_number\": \"CONT-0001\",\n  \"container_type\": \"40HC\",\n  \"status\": \"available\",\n  \"location\": \"yard-a\",\n  \"condition\": \"good\",\n  \"notes\": \"example record\"\n}"
+        },
+        "url": "{{baseUrl}}/containers"
+      }
+    },
+    {
+      "name": "Get container",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/containers/{{containerId}}"
+      }
+    }
+  ]
+}
